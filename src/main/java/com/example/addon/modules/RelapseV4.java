@@ -6,6 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 
 import java.util.EnumSet;
 
@@ -20,9 +21,9 @@ public class RelapseV4 extends RelapseBase {
         forEachPos(event.packet, EnumSet.of(Kind.BLOCK_ENTITY), (k, pos) -> mark(pos));
         if (event.packet instanceof ClientboundAddEntityPacket p) {
             EntityType<?> t = p.getType();
-            boolean storageMinecart = t == EntityType.CHEST_MINECART
-                || t == EntityType.HOPPER_MINECART
-                || t == EntityType.SPAWNER_MINECART;
+            boolean storageMinecart = t == EntityTypes.CHEST_MINECART
+                || t == EntityTypes.HOPPER_MINECART
+                || t == EntityTypes.SPAWNER_MINECART;
             boolean chestBoat = false;
             Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(t);
             if (id != null) {

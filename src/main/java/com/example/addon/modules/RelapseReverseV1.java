@@ -41,7 +41,7 @@ public class RelapseReverseV1 extends RelapseBase {
     private void onTick(TickEvent.Post event) {
         if (mc.level == null || mc.player == null || mc.getConnection() == null) return;
         int r = reach.get(), sent = 0;
-        BlockPos o = mc.player.getBlockPos();
+        BlockPos o = mc.player.blockPosition();
         outer:
         for (int dy = -r; dy <= r; dy++)
             for (int dx = -r; dx <= r; dx++)
