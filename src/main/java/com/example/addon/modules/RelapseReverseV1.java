@@ -5,10 +5,10 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,7 +39,7 @@ public class RelapseReverseV1 extends RelapseBase {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        if (mc.world == null || mc.player == null || mc.getNetworkHandler() == null) return;
+        if (mc.level == null || mc.player == null || mc.getConnection() == null) return;
         int r = reach.get(), sent = 0;
         BlockPos o = mc.player.getBlockPos();
         outer:
@@ -48,8 +48,8 @@ public class RelapseReverseV1 extends RelapseBase {
                 for (int dz = -r; dz <= r; dz++) {
                     BlockPos p = o.add(dx, dy, dz);
                     if (!probed.add(p)) continue;
-                    mc.getNetworkHandler().sendPacket(
-                        new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, p, Direction.UP, 0));
+                    mc.getConnection().send(
+                        new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, p, Direction.UP, 0));
                     if (++sent >= perTick.get()) break outer;
                 }
         if (probed.size() > 20000) probed.clear();
@@ -57,8 +57,8 @@ public class RelapseReverseV1 extends RelapseBase {
 
     @EventHandler
     private void onPacket(PacketEvent.Receive event) {
-        if (!(event.packet instanceof BlockUpdateS2CPacket p) || mc.world == null) return;
+        if (!(event.packet instanceof ClientboundBlockUpdatePacket p) || mc.level == null) return;
         BlockPos pos = p.getPos();
-        if (probed.contains(pos) && mc.world.getBlockState(pos) != p.getState()) mark(pos);
+        if (probed.contains(pos) && mc.level.getBlockState(pos) != p.getBlockState()) mark(pos);
     }
 }

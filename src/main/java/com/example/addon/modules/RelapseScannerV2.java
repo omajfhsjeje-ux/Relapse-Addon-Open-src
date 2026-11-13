@@ -4,9 +4,10 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 
 /**
  * Block entities (chests, spawners, shulkers, beds...) are stored in the chunk's block-entity map.
@@ -23,15 +24,14 @@ public class RelapseScannerV2 extends RelapseBase {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        if (mc.world == null || mc.player == null || ++ticks < 40) return;
+        if (mc.level == null || mc.player == null || ++ticks < 40) return;
         ticks = 0;
         int pcx = mc.player.getBlockX() >> 4, pcz = mc.player.getBlockZ() >> 4, r = radius.get();
         for (int cx = pcx - r; cx <= pcx + r; cx++) {
             for (int cz = pcz - r; cz <= pcz + r; cz++) {
-                WorldChunk chunk = mc.world.getChunkManager().getWorldChunk(cx, cz);
-                if (chunk == null) continue;
+                if (!(mc.level.getChunk(cx, cz, ChunkStatus.FULL, false) instanceof LevelChunk chunk)) continue;
                 for (BlockEntity be : chunk.getBlockEntities().values()) {
-                    BlockPos p = be.getPos();
+                    BlockPos p = be.getBlockPos();
                     mark(p);
                 }
             }

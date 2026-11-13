@@ -18,20 +18,16 @@ public class AddonTemplate extends MeteorAddon {
 
     @Override
     public void onInitialize() {
-        LOG.info("Relapse Debug loading");
+        LOG.info("Relapse Addon loading");
         MeteorClient.EVENT_BUS.registerLambdaFactory("com.example.addon",
             (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
         Modules m = Modules.get();
-        m.add(new RelapseChunkFinder());
-        m.add(new RelapseDebugV5());
-        m.add(new RelapseDetectorV2());
-        m.add(new RelapseCustomBlockOutline());
+        m.add(new RelapseScannerV2());
         m.add(new RelapseSusFinderV1());
         m.add(new RelapseV4());
-        m.add(new RelapseInspectorV7());
-        m.add(new RelapseScannerV2());
         m.add(new RelapseReverseV1());
+        m.add(new RelapseLightXray());
     }
 
     @Override

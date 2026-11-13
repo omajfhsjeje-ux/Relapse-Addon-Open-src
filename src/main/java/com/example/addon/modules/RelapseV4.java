@@ -2,8 +2,10 @@ package com.example.addon.modules;
 
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.EntityType;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityType;
 
 import java.util.EnumSet;
 
@@ -16,10 +18,18 @@ public class RelapseV4 extends RelapseBase {
     @EventHandler
     private void onPacket(PacketEvent.Receive event) {
         forEachPos(event.packet, EnumSet.of(Kind.BLOCK_ENTITY), (k, pos) -> mark(pos));
-        if (event.packet instanceof EntitySpawnS2CPacket p) {
-            EntityType<?> t = p.getEntityType();
-            if (t == EntityType.CHEST_MINECART || t == EntityType.HOPPER_MINECART || t == EntityType.OAK_CHEST_BOAT
-                || t == EntityType.SPAWNER_MINECART) {
+        if (event.packet instanceof ClientboundAddEntityPacket p) {
+            EntityType<?> t = p.getType();
+            boolean storageMinecart = t == EntityType.CHEST_MINECART
+                || t == EntityType.HOPPER_MINECART
+                || t == EntityType.SPAWNER_MINECART;
+            boolean chestBoat = false;
+            Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(t);
+            if (id != null) {
+                String path = id.getPath();
+                chestBoat = path.endsWith("_chest_boat") || path.endsWith("_chest_raft");
+            }
+            if (storageMinecart || chestBoat) {
                 mark(p.getX(), p.getY(), p.getZ());
             }
         }

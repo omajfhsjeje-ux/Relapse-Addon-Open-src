@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
+  "id": "relapse-addon",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for Meteor Client addons.",
+  "name": "Relapse Addon",
+  "description": "Relapse addon for Meteor Client. Finds hidden light sources and stash chunks below the Y filter.",
   "authors": [
     "seasnail"
   ],
   "contact": {
-    "sources": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "sources": "https://github.com/omajfhsjeje-ux/Relapse-Addon-Open-src"
   },
-  "icon": "assets/template/icon.png",
+  "icon": "assets/relapse-addon/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
@@ -21,7 +21,7 @@
     "addon-template.mixins.json"
   ],
   "custom": {
-    "meteor-client:color": "225,25,25",
+    "meteor-client:color": "255,176,0",
     "modmenu": {
       "parent": {
         "id": "meteor-client"
